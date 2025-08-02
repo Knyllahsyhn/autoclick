@@ -19,7 +19,7 @@ A lightweight, keyboard-controlled auto-clicker that hunts for pop-ups on your s
 
 ## 🚀 Quick start
 
-### 1. Clone & install
+###  Clone & install
 
 ```bash
 git clone https://github.com/Knyllahsyhn/autoclicker.git
