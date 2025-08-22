@@ -25,14 +25,14 @@ from rich.live import Live
 # ----------------- Konfiguration -----------------
 BUTTONS_FOLDER     = "buttons"
 SCAN_EXTENSIONS    = ('.png', '.jpg', '.jpeg', '.bmp')
-RELOAD_INTERVAL_S  = 3.0        # wie oft Templates neu laden
-SCAN_INTERVAL_S    = 0.05       # kleine Pause pro Loop
+RELOAD_INTERVAL_S  = 10      # wie oft Templates neu laden
+SCAN_INTERVAL_S    = 0.02     # kleine Pause pro Loop
 THRESHOLD          = 0.86       # Match-Schwelle (0.80–0.92 justieren)
 DOWNSCALE          = 0.90       # 1.0 = aus; 0.75–0.9 beschleunigt
 WINDOW_TITLE_HINT  = "Bluestacks App Player 1 " # z.B. "BlueStacks", "Nox", "Memu", "Android"
 MAX_LOG_LINES      = 12
 MAX_WORKERS        = max(4, os.cpu_count() or 4)  # Threads für paralleles Matching
-CLICK_COOLDOWN_S   = 0.5       # um Doppelklicks zu vermeiden
+CLICK_COOLDOWN_S   = 0.2       # um Doppelklicks zu vermeiden
 
 # ----------------- Zustände/Globals -----------------
 console      = Console()
@@ -214,12 +214,15 @@ def render_ui():
     log_panel = Panel(log_render, title="Log", border_style="magenta")
 
     # Seite nebeneinander
-    grid = Table.grid(padding=(0,1))
-    grid.add_row(status_panel)
-    grid.add_row(tmpl_panel)
-    grid.add_row(log_panel)
-    return grid
+    left = Table.grid(expand=True)
+    left.add_row(status_panel)
+    left.add_row(tmpl_panel)
 
+    grid = Table.grid(expand=True)
+    grid.add_column(ratio=1)
+    grid.add_column(ratio=2)
+    grid.add_row(left, log_panel)
+    return grid
 # ----------------- Main -----------------
 def main():
     global templates, bbox, last_reload, loop_ms, fps, last_action, last_error, running
@@ -247,7 +250,6 @@ def main():
             # dynamisch nachladen
             if time.time() - last_reload >= RELOAD_INTERVAL_S:
                 templates = load_templates()
-                add_log(f"[dim]Templates neu geladen: {len(templates)}[/dim]")
                 last_reload = time.time()
 
             if not paused and templates:
