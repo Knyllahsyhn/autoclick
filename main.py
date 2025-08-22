@@ -287,4 +287,7 @@ def main():
     console.print("[bold green]Programm beendet.[/bold green]")
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        console.print("\n[red]Keyboard interrupt caught, exiting...[/red]")
